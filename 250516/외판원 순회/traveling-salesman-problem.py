@@ -9,7 +9,7 @@ ret = 10000 * 10
 
 def search_min_path(idx, cur_val):
     global ret
-    if sum(visit) == n:
+    if sum(visit) == n and boards[idx][0] != 0:
         ret = min(ret, cur_val + boards[idx][0])
         return
     for i in range(1, n):
