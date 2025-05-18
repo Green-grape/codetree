@@ -1,19 +1,16 @@
 import os
 import sys
 
+input=sys.stdin.readline
+
 sys.setrecursionlimit(100000)
 
-data=os.read(0, os.fstat(0).st_size).splitlines()
-ptr=0
-
-n, m=map(int, data[ptr].decode().split())
-ptr+=1
+n, m=map(int, input().split())
 
 boards=[]
 
 for _ in range(n):
-    boards.append(list(map(int, data[ptr].decode().split())))
-    ptr+=1
+    boards.append(list(map(int, input().split())))
 
 move_dirs=[(-1, 0), (1, 0), (0,-1), (0,1)]
 visit=[[False]*m for _ in range(n)]
