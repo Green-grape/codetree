@@ -1,32 +1,39 @@
 import os
 import sys
 
-input=sys.stdin.readline
+
+input = sys.stdin.readline
+
 
 sys.setrecursionlimit(100000)
 
-n, m=map(int, input().split())
+n, m = map(int, input().split())
 
-boards=[]
+boards = []
 
 for _ in range(n):
     boards.append(list(map(int, input().split())))
 
-move_dirs=[(-1, 0), (1, 0), (0,-1), (0,1)]
-visit=[[False]*m for _ in range(n)]
-
-def dfs(i, j):
-    if visit[i][j]:
-        return
-    visit[i][j]=True
-    for dy, dx in move_dirs:
-        y=i+dy
-        x=j+dx
-        if x<0 or y<0 or x>=m or y>=n:
-            continue
-        if boards[y][x]==1:
-            dfs(y, x)
+move_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+bfs_visited = [[False] * m for _ in range(n)]
 
 
-dfs(0, 0)
-print(1 if visit[n-1][m-1] else 0)
+def bfs(i, j):
+    queue = [(i, j)]
+    bfs_visited[i][j] = True
+    while len(queue) > 0:
+        i, j = queue.pop(0)
+        for move_dir in move_dirs:
+            ni, nj = i + move_dir[0], j + move_dir[1]
+            if (
+                0 <= ni < n
+                and 0 <= nj < m
+                and not bfs_visited[ni][nj]
+                and boards[ni][nj] == 1
+            ):
+                bfs_visited[ni][nj] = True
+                queue.append((ni, nj))
+
+
+bfs(0, 0)
+print(1 if bfs_visited[n - 1][m - 1] else 0)
