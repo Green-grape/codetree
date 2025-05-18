@@ -1,4 +1,7 @@
 import os
+import sys
+
+sys.setrecursionlimit(100000)
 
 data=os.read(0, os.fstat(0).st_size).splitlines()
 ptr=0
