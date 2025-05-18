@@ -17,6 +17,7 @@ for _ in range(k):
     if bfs_visit[i][j]:
         continue
     queue=[(i, j)]
+    bfs_visit[i][j]=True
     while len(queue)>0:
         i, j=queue.pop(0)
         for dy, dx in move_dirs:
