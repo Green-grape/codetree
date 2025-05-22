@@ -26,8 +26,8 @@ while len(queue)>0:
         if not visit[y][x] and boards[y][x]==1:
             queue.append((y, x, cur_move+1))
             visit[y][x]=True
-
-print(step[n-1][m-1])
+            
+print(step[n-1][m-1] if step[n-1][m-1]!=0 else -1)
         
 
     
