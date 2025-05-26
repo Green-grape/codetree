@@ -20,5 +20,7 @@ def find_max_length_of_increasing_list(i):
             dp[i]=max(dp[i], find_max_length_of_increasing_list(idx)+1)
     return dp[i]
 
-
-print(find_max_length_of_increasing_list(0))
+ret=0
+for i in range(n):
+    ret=max(ret, find_max_length_of_increasing_list(i))
+print(ret)
