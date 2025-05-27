@@ -1,5 +1,7 @@
 import sys
 
+sys.setrecursionlimit(100000)
+
 n, m=map(int, input().split())
 
 coin_values=list(map(int, input().split()))
