@@ -13,5 +13,6 @@ for quest in quests:
         if exp-quest[0]>=0 and dp[exp-quest[0]]!=100*n:
             dp[exp]=min(dp[exp], dp[exp-quest[0]]+quest[1])
 
-print(min(dp[m:]))
+ret=min(dp[m:])
+print(ret if ret!=100*n else -1)
 
