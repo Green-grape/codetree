@@ -11,12 +11,12 @@ def get_max_phylon(i, j, k):
         return 0
     if dp[i][j][k]!=-1:
         return dp[i][j][k]
-    dp[i][j][k]=0
     cur_ret=1 if phylons[i]==j else 0
+    dp[i][j][k]=cur_ret
     dp[i][j][k]=max(dp[i][j][k], cur_ret+get_max_phylon(i+1, j, k))
     if k<max_move:
         dp[i][j][k]=max(dp[i][j][k], cur_ret+get_max_phylon(i+1, (j+1)%2, k+1))
     return dp[i][j][k]
 
-print(get_max_phylon(0, 0, 0))
+print(max(get_max_phylon(0, 0, 0), get_max_phylon(0, 1, 1)))
     
