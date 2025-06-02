@@ -10,6 +10,7 @@ def get_max_superseq_cnt(i, j):
         return 0
     if dp[i][j]!=-1:
         return dp[i][j]
+    dp[i][j]=0
     is_same=int(str_a[i]==str_b[j])
     dp[i][j]=max(dp[i][j], is_same+get_max_superseq_cnt(i-1, j-1))
     dp[i][j]=max(dp[i][j], get_max_superseq_cnt(i-1, j))
