@@ -18,6 +18,6 @@ for key in sorted_keys:
         ret+=cnt_dict[key]*cnt_dict[k-key]
 
 if k%2==0 and (k//2 in cnt_dict):
-    ret+=cnt_dict[k//2]*(cnt_dict[k//2]-1)/2
+    ret+=int(cnt_dict[k//2]*(cnt_dict[k//2]-1)/2)
 print(ret)
     
