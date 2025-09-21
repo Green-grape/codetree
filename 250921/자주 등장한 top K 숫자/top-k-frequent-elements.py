@@ -4,7 +4,7 @@ num_list=map(int, input().split())
 cnt_dict={}
 for num in num_list:
     if num in cnt_dict:
-        cnt_dict[num]=(cnt_dict[num][1]+1, num)
+        cnt_dict[num]=(cnt_dict[num][0]+1, num)
     else:
         cnt_dict[num]=(1, num)
 
