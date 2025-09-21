@@ -34,13 +34,13 @@ def merge_cnt_dict(d1, d2):
     return ret
 
 
-ret=merge_cnt_dict(arr1_cnt_dict, arr2_cnt_dict)
-del arr1_cnt_dict
-del arr2_cnt_dict
-gc.collect()
-ret=merge_cnt_dict(ret, arr3_cnt_dict)
-del arr3_cnt_dict 
-gc.collect()
-ret=merge_cnt_dict(ret, arr4_cnt_dict)
-print(ret[0])
+merge1=merge_cnt_dict(arr1_cnt_dict, arr2_cnt_dict)
+merge2=merge_cnt_dict(arr3_cnt_dict, arr4_cnt_dict)
+
+ret=0
+for k1, v1 in merge1.items():
+    ret+=merge2.get(-k1, 0)*v1
+print(ret)
+
+
 
