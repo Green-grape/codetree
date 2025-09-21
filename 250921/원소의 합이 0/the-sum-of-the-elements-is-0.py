@@ -1,3 +1,4 @@
+import gc
 n=int(input())
 
 arr1=map(int, input().split())
@@ -13,9 +14,14 @@ def make_cnt_dict(arr):
     return ret
 
 arr1_cnt_dict=make_cnt_dict(arr1)
+del arr1
 arr2_cnt_dict=make_cnt_dict(arr2)
+del arr2
 arr3_cnt_dict=make_cnt_dict(arr3)
+del arr3
 arr4_cnt_dict=make_cnt_dict(arr4)
+del arr4
+gc.collect()
 
 def merge_cnt_dict(d1, d2):
     ret={}
@@ -29,7 +35,12 @@ def merge_cnt_dict(d1, d2):
 
 
 ret=merge_cnt_dict(arr1_cnt_dict, arr2_cnt_dict)
+del arr1_cnt_dict
+del arr2_cnt_dict
+gc.collect()
 ret=merge_cnt_dict(ret, arr3_cnt_dict)
+del arr3_cnt_dict 
+gc.collect()
 ret=merge_cnt_dict(ret, arr4_cnt_dict)
 print(ret[0])
 
