@@ -11,11 +11,9 @@ for _ in range(k):
 
 for i in range(3 * k):
     a, b = change_seq[i % k]
-    temp = cur_pos[a]
-    cur_pos[a] = cur_pos[b]
-    cur_pos[b] = temp
-    pos_record[cur_pos[a]].add(b)
-    pos_record[cur_pos[b]].add(a)
+    cur_pos[a], cur_pos[b] = cur_pos[b], cur_pos[a]
+    pos_record[cur_pos[a]].add(a)
+    pos_record[cur_pos[b]].add(b)
 
 ret = "\n".join([str(len(c)) for c in pos_record])
 print(ret)
