@@ -18,6 +18,7 @@ for i in range(g):
     g_to_p[i]=set(p_list)
         
 ret=0
+checked_p=set()
 while True:
     cand_p=[]
     for tar_p in next_p:
@@ -25,9 +26,10 @@ while True:
         for tar_g in tar_g_list:
             tar_g_set=g_to_p[tar_g]
             tar_g_set.remove(tar_p)
-            if len(tar_g_set)==1 and not (list(tar_g_set)[0] in next_p):
+            if len(tar_g_set)==1 and not (tar_p in checked_p):
                 cand_p.append(list(tar_g_set)[0])
     ret+=len(next_p)
+    checked_p.update(next_p)
     if len(cand_p)==0: break
     next_p=cand_p.copy()
 
