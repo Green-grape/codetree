@@ -19,7 +19,7 @@ for i in range(n):
         if r_idx<len(s):
             right_num=s[r_idx]
         else:
-            right_num=10**9
+            right_num=10**12
         left_num=s[r_idx-1]
         min_len=min(min_len, min(abs(right_num-num), abs(num-left_num)))
         ret.append(min_len)
