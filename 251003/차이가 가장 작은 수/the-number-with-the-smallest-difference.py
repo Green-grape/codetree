@@ -16,7 +16,7 @@ for _ in range(n):
         if right_min_idx<len(s):
             ret=min(ret, s[right_min_idx]-num)
         if left_max_idx<len(s_r):
-            ret=min(ret, num-s[left_max_idx])
+            ret=min(ret, num-s_r[left_max_idx])
     s.add(num)
     s_r.add(num)
 
