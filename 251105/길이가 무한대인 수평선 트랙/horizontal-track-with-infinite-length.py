@@ -13,7 +13,7 @@ for _ in range(n):
         s.add((end_pos, start_pos))
     else:
         # 나중에 들어왔는데 속도가 느림 -> 기존애들 중에 겹치면서 더 빠른 애들 제거
-        while True:
+        while len(s) > 0:
             last_end_pos, last_start_pos = s[-1]
             if last_end_pos >= end_pos and last_start_pos <= start_pos:
                 s.pop()
