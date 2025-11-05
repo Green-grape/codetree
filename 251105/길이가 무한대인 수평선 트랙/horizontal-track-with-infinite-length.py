@@ -7,13 +7,19 @@ s = SortedSet()
 for _ in range(n):
     start_pos, v = map(int, input().split())
     end_pos = start_pos + v * t
-    if len(s) == 0 or end_pos > s[-1]:
-        s.add(end_pos)
+    if (
+        len(s) == 0 or end_pos > s[-1][0]
+    ):  # 더 나중에 들어왔는데 속도도 빠르면 그냥 추가
+        s.add((end_pos, start_pos))
     else:
-        #print(end_pos, s)
-        idx = s.bisect_left(end_pos)
-        s.remove(s[idx])
-        s.add(end_pos)
+        # 나중에 들어왔는데 속도가 느림 -> 기존애들 중에 겹치면서 더 빠른 애들 제거
+        while True:
+            last_end_pos, last_start_pos = s[-1]
+            if last_end_pos >= end_pos and last_start_pos <= start_pos:
+                s.pop()
+            else:
+                break
+        s.add((end_pos, start_pos))
 
 print(len(s))
 
