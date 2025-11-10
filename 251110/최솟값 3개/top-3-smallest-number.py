@@ -25,17 +25,22 @@ n = int(input())
 nums = list(map(int, input().split()))
 
 ret = []
+min3_set = set()
 for num in nums:
     pq.put(num)
     if len(pq.elements) < 3:
         ret.append(-1)
+        min3_set.add(num)
     else:
-        first = pq.pop()[0]
-        second = pq.pop()[0]
-        third = pq.pop()[0]
-        ret.append(first * second * third)
-        pq.put(first)
-        pq.put(second)
-        pq.put(third)
+        if len(min3_set) == 3 and num <= max(min3_set):
+            min3_set.remove(max(min3_set))
+            min3_set.add(num)
+        elif len(min3_set) < 3:
+            min3_set.add(num)
+        mult = 1
+        for v in min3_set:
+            mult *= v
+        ret.append(mult)
+
 
 print("\n".join(map(str, ret)))
