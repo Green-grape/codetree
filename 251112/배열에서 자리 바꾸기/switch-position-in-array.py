@@ -1,67 +1,112 @@
-class DoubleLinkedListNode:
-    def __init__(self, value):
-        self.value = value
+import sys
+
+input = sys.stdin.readline
+
+
+class Node:
+    __slots__ = ("val", "prev", "next")
+
+    def __init__(self, v):
+        self.val = v
         self.prev = None
         self.next = None
 
 
-def insert_after(node, new_node):
-    new_node.prev = node
-    new_node.next = node.next
-    if node.next:
-        node.next.prev = new_node
-    node.next = new_node
+def build_list(n: int):
+    nodes = [Node(i) for i in range(1, n + 1)]
+    for i in range(n):
+        if i:
+            nodes[i].prev = nodes[i - 1]
+        if i < n - 1:
+            nodes[i].next = nodes[i + 1]
+    return nodes, nodes[0]  # (모든 노드 배열, head)
 
 
-def insert_before(node, new_node):
-    new_node.next = node
-    new_node.prev = node.prev
-    if node.prev:
-        node.prev.next = new_node
-    node.prev = new_node
+def swap_segments(head: Node, A: Node, B: Node, C: Node, D: Node):
+    """
+    [A..B] 와 [C..D] (서로 겹치지 않음, 각 구간 내부는 연속) 를 위치 교환.
+    인접/비인접 모두 처리. 새 head 반환.
+    """
+    Ap, Bn = A.prev, B.next
+    Cp, Dn = C.prev, D.next
+
+    if Bn is C:
+        # ... Ap <-> A ... B <-> C ... D <-> Dn ...
+        # -> ... Ap <-> C ... D <-> A ... B <-> Dn ...
+        if Ap:
+            Ap.next = C
+        else:
+            head = C
+        C.prev = Ap
+
+        D.next = A
+        A.prev = D
+
+        B.next = Dn
+        if Dn:
+            Dn.prev = B
+
+    elif Dn is A:
+        # ... Cp <-> C ... D <-> A ... B <-> Bn ...
+        # -> ... Cp <-> A ... B <-> C ... D <-> Bn ...
+        if Cp:
+            Cp.next = A
+        else:
+            head = A
+        A.prev = Cp
+
+        B.next = C
+        C.prev = B
+
+        D.next = Bn
+        if Bn:
+            Bn.prev = D
+
+    else:
+        # 비인접 일반 케이스
+        # 바깥 연결: Ap–C , Cp–A , D–Bn , B–Dn
+        if Ap:
+            Ap.next = C
+        else:
+            head = C
+        C.prev = Ap
+
+        if Cp:
+            Cp.next = A
+        else:
+            head = A
+        A.prev = Cp
+
+        if Dn:
+            Dn.prev = B
+        B.next = Dn
+
+        if Bn:
+            Bn.prev = D
+        D.next = Bn
+
+    return head
 
 
-n = int(input())
+def main():
+    n = int(input().strip())
+    q = int(input().strip())
 
-nodes = [DoubleLinkedListNode(i) for i in range(1, n + 1)]
+    nodes, head = build_list(n)
 
-for i in range(n):
-    nodes[i].prev = nodes[i - 1] if i > 0 else None
-    nodes[i].next = nodes[i + 1] if i < n - 1 else None
+    for _ in range(q):
+        a, b, c, d = map(int, input().split())
+        # a<=b, c<=d, 서로 겹치지 않음이 문제에서 보장
+        A, B, C, D = nodes[a - 1], nodes[b - 1], nodes[c - 1], nodes[d - 1]
+        head = swap_segments(head, A, B, C, D)
 
-q = int(input())
+    # 최종 출력
+    out = []
+    cur = head
+    while cur:
+        out.append(str(cur.val))
+        cur = cur.next
+    print(" ".join(out))
 
-for _ in range(q):
-    a, b, c, d = map(int, input().split())
-    node_a = nodes[a - 1]
-    node_b = nodes[b - 1]
-    node_c = nodes[c - 1]
-    node_d = nodes[d - 1]
 
-    temp_a_prev = node_a.prev
-    node_a.prev = node_c.prev
-    if node_c.prev:
-        node_c.prev.next = node_a
-    temp_b_next = node_b.next
-    node_b.next = node_d.next
-    if node_d.next:
-        node_d.next.prev = node_b
-
-    node_c.prev = temp_a_prev
-    if temp_a_prev:
-        temp_a_prev.next = node_c
-    node_d.next = temp_b_next
-    if temp_b_next:
-        temp_b_next.prev = node_d
-
-# find start
-for node in nodes:
-    if node.prev is None:
-        start_node = node
-        break
-
-ret = []
-while start_node:
-    ret.append(str(start_node.value))
-    start_node = start_node.next
-print(" ".join(ret))
+main()
