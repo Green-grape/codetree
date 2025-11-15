@@ -77,7 +77,7 @@ for _ in range(q):
         target_node = node_dict.get(target_value)
         left_value = target_node.left.value if target_node.left else -1
         right_value = target_node.right.value if target_node.right else -1
-        if left_value == -1 and right_value == -1:
+        if (left_value == -1) or (right_value == -1):
             ret.append("-1")
         else:
             ret.append(f"{left_value} {right_value}")
