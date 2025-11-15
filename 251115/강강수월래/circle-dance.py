@@ -1,3 +1,14 @@
+# test_case_file = "./test_case.txt"
+# answer_file = "./answer.txt"
+
+# import sys
+
+# f = open(test_case_file, "r")
+# answer = open(answer_file, "r")
+
+
+# input = f.readline
+
 n, m, q = map(int, input().split())
 
 
@@ -56,13 +67,18 @@ def merge_circles(x, y):
         left_y.right = right_x
 
     circles[circle_idx_x].update(circles[circle_idx_y])
-    del circles[circle_idx_y]
+    circles[circle_idx_y] = {}
 
 
 def divide_circle(x, y):
     circle_idx, node_x = get_node_by_val(x)
-    _, node_y = get_node_by_val(y)
-    if circle_idx is None or node_x is node_y:
+    circle_idx_y, node_y = get_node_by_val(y)
+    if (
+        circle_idx is None
+        or circle_idx_y is None
+        or circle_idx != circle_idx_y
+        or node_x is node_y
+    ):
         return
 
     circle = circles[circle_idx]
@@ -79,10 +95,14 @@ def divide_circle(x, y):
         curr = next_node
 
     # Adjust pointers to split the circles
-    head.left.right = node_y
-    node_y.left.right = head
-    node_y.left = head.left
-    head.left = node_y.left
+    left_head = head.left
+    left_y = node_y.left
+
+    left_head.right = node_y
+    node_y.left = left_head
+
+    left_y.right = head
+    head.left = left_y
 
     circles.append(new_circle)
     circles[circle_idx] = circle
@@ -134,6 +154,13 @@ for _ in range(q):
                 break
         ret.append(" ".join(res))
 print("\n".join(ret))
+# answer_list = answer.readline()
+# res = ret[0]
+# for line in answer:
+#     expected = line.strip()
+#     actual = ret.pop(0)
+#     assert expected == actual, f"Expected: {expected}, Actual: {actual}"
+# print("All test cases passed!")
 
 
 # 1 4 3
