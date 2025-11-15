@@ -13,45 +13,52 @@ n, m, q = map(int, input().split())
 
 
 class Node:
+    __slots__ = ("val", "left", "right")  # 메모리/속도 미세최적화
+
     def __init__(self, val):
         self.val = val
         self.left = None
         self.right = None
 
 
-circles = []
+# 값 -> 노드 객체
+node_pos = {}
+
+# 초기 M개의 원 만들기
 for _ in range(m):
     nums = list(map(int, input().split()))
     k = nums[0]
-    node_dict = {}
+
+    prev = None
+    first = None
     for i in range(1, k + 1):
-        if i == 1:
-            root = Node(nums[i])
-            curr = root
-            node_dict[nums[i]] = root
+        v = nums[i]
+        node = Node(v)
+        node_pos[v] = node
+        if prev is None:
+            first = node
         else:
-            new_node = Node(nums[i])
-            curr.right = new_node
-            new_node.left = curr
-            curr = new_node
-            node_dict[nums[i]] = new_node
-    root.left = curr
-    curr.right = root
-    circles.append(node_dict)
+            prev.right = node
+            node.left = prev
+        prev = node
+    # 원형으로 연결
+    first.left = prev
+    prev.right = first
 
 
-def get_node_by_val(val):
-    for i, circle in enumerate(circles):
-        if val in circle:
-            return i, circle[val]
-    return None
+def get_node(val: int) -> Node:
+    return node_pos[val]
 
 
-def merge_circles(x, y):
-    circle_idx_x, node_x = get_node_by_val(x)
-    circle_idx_y, node_y = get_node_by_val(y)
-    if circle_idx_x == circle_idx_y:
-        return
+def merge_circles(x: int, y: int):
+    node_x = get_node(x)
+    node_y = get_node(y)
+
+    cur = node_x.right
+    while cur is not node_x:
+        if cur is node_y:
+            return  # 이미 같은 원
+        cur = cur.right
 
     # Connect the two circles
     left_x = node_x.left
@@ -66,94 +73,80 @@ def merge_circles(x, y):
     if left_y:
         left_y.right = right_x
 
-    circles[circle_idx_x].update(circles[circle_idx_y])
-    circles[circle_idx_y] = {}
 
+def divide_circle(x: int, y: int):
+    head = get_node(x)
+    boundary = get_node(y)
 
-def divide_circle(x, y):
-    circle_idx, node_x = get_node_by_val(x)
-    circle_idx_y, node_y = get_node_by_val(y)
-    if (
-        circle_idx is None
-        or circle_idx_y is None
-        or circle_idx != circle_idx_y
-        or node_x is node_y
-    ):
+    if head is boundary:
         return
 
-    circle = circles[circle_idx]
-
-    new_circle = {}
-    head = node_x
-    curr = node_x
+    # head에서 시작해 boundary 직전까지가 잘라낼 구간
+    curr = head
     while True:
-        new_circle[curr.val] = curr
-        next_node = curr.right
-        circle.pop(curr.val)
-        if next_node is node_y:
+        nxt = curr.right
+        if nxt is boundary:
+            tail = curr  # 잘라낼 구간의 마지막 노드
             break
-        curr = next_node
+        curr = nxt
+        if curr is head:
+            # 한 바퀴 돌았는데 boundary를 못 만나면 다른 원이므로 무시
+            return
 
-    # Adjust pointers to split the circles
+    # 현재 구조:
+    # ... <-> left_head <-> head ... tail <-> boundary <-> ...
     left_head = head.left
-    left_y = node_y.left
+    left_y = boundary.left  # 이게 tail
 
-    left_head.right = node_y
-    node_y.left = left_head
+    # 1) 남는 원: left_head <-> boundary
+    left_head.right = boundary
+    boundary.left = left_head
 
+    # 2) 새 원: tail(left_y) <-> head
     left_y.right = head
     head.left = left_y
 
-    circles.append(new_circle)
-    circles[circle_idx] = circle
-
-
-def print_circles():
-    ret = []
-    for circle in circles:
-        head = circle[list(circle.keys())[0]]
-        curr = circle[list(circle.keys())[0]]
-        res = []
-        while True:
-            res.append(curr.val)
-            curr = curr.right
-            if curr is head:
-                break
-        ret.append("->".join(map(str, res)))
-    print("\n".join(ret))
-
 
 ret = []
+
 for _ in range(q):
     cmd = list(map(int, input().split()))
-    if cmd[0] == 1:
+    t = cmd[0]
+
+    if t == 1:
         _, x, y = cmd
         merge_circles(x, y)
-    elif cmd[0] == 2:
+
+    elif t == 2:
         _, x, y = cmd
         divide_circle(x, y)
+
     else:
         _, x = cmd
-        circle_idx, node_x = get_node_by_val(x)
-        # get smallest value in the circle
+        node_x = get_node(x)
+
+        # 같은 원에서 최소값 노드 찾기 (오른쪽으로 한 바퀴)
         curr = node_x
-        min_val = curr.val
+        min_node = node_x
         while True:
             curr = curr.right
-            if curr.val < min_val:
-                min_val = curr.val
+            if curr.val < min_node.val:
+                min_node = curr
             if curr is node_x:
                 break
-        circle_idx, node_x = get_node_by_val(min_val)
-        curr = node_x
+
+        # 최소값 노드에서 왼쪽으로 한 바퀴 돌며 출력
+        curr = min_node
         res = []
         while True:
             res.append(str(curr.val))
             curr = curr.left
-            if curr is node_x:
+            if curr is min_node:
                 break
         ret.append(" ".join(res))
+
 print("\n".join(ret))
+
 # answer_list = answer.readline()
 # res = ret[0]
 # for line in answer:
@@ -161,7 +154,3 @@ print("\n".join(ret))
 #     actual = ret.pop(0)
 #     assert expected == actual, f"Expected: {expected}, Actual: {actual}"
 # print("All test cases passed!")
-
-
-# 1 4 3
-# 2 8 7 5 6
