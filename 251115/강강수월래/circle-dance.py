@@ -62,8 +62,10 @@ def merge_circles(x, y):
 def divide_circle(x, y):
     circle_idx, node_x = get_node_by_val(x)
     _, node_y = get_node_by_val(y)
-    if circle_idx is None or node_x == node_y:
+    if circle_idx is None or node_x is node_y:
         return
+
+    circle = circles[circle_idx]
 
     new_circle = {}
     head = node_x
@@ -71,7 +73,8 @@ def divide_circle(x, y):
     while True:
         new_circle[curr.val] = curr
         next_node = curr.right
-        if next_node == node_y:
+        circle.pop(curr.val)
+        if next_node is node_y:
             break
         curr = next_node
 
@@ -82,9 +85,7 @@ def divide_circle(x, y):
     head.left = node_y.left
 
     circles.append(new_circle)
-    circles[circle_idx] = {
-        k: v for k, v in circles[circle_idx].items() if k not in new_circle.keys()
-    }
+    circles[circle_idx] = circle
 
 
 def print_circles():
@@ -96,7 +97,7 @@ def print_circles():
         while True:
             res.append(curr.val)
             curr = curr.right
-            if curr == head:
+            if curr is head:
                 break
         ret.append("->".join(map(str, res)))
     print("\n".join(ret))
@@ -121,7 +122,7 @@ for _ in range(q):
             curr = curr.right
             if curr.val < min_val:
                 min_val = curr.val
-            if curr == node_x:
+            if curr is node_x:
                 break
         circle_idx, node_x = get_node_by_val(min_val)
         curr = node_x
@@ -129,7 +130,11 @@ for _ in range(q):
         while True:
             res.append(str(curr.val))
             curr = curr.left
-            if curr == node_x:
+            if curr is node_x:
                 break
         ret.append(" ".join(res))
 print("\n".join(ret))
+
+
+# 1 4 3
+# 2 8 7 5 6
