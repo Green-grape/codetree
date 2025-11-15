@@ -51,27 +51,26 @@ def get_node(val: int) -> Node:
 
 
 def merge_circles(x: int, y: int):
-    node_x = get_node(x)
-    node_y = get_node(y)
+    u = get_node(x)
+    v = get_node(y)
 
-    cur = node_x.right
-    while cur is not node_x:
-        if cur is node_y:
-            return  # 이미 같은 원
+    # (옵션) 이미 같은 원인지 체크
+    cur = u.right
+    while cur is not u:
+        if cur is v:
+            return
         cur = cur.right
 
-    # Connect the two circles
-    left_x = node_x.left
-    right_x = node_x.right
-    left_y = node_y.left
-    right_y = node_y.right
+    v_prev = v.left  # 정답 코드의 v.prev
+    u_next = u.right  # 정답 코드의 u.next
 
-    node_x.right = node_y
-    node_y.left = node_x
-    if right_x:
-        right_x.left = left_y
-    if left_y:
-        left_y.right = right_x
+    # u <-> v
+    u.right = v
+    v.left = u
+
+    # v_prev <-> u_next
+    v_prev.right = u_next
+    u_next.left = v_prev
 
 
 def divide_circle(x: int, y: int):
@@ -149,8 +148,9 @@ print("\n".join(ret))
 
 # answer_list = answer.readline()
 # res = ret[0]
-# for line in answer:
-#     expected = line.strip()
-#     actual = ret.pop(0)
-#     assert expected == actual, f"Expected: {expected}, Actual: {actual}"
-# print("All test cases passed!")
+# for i in range(len(answer_list)):
+#     expected = answer_list[i]
+#     actual = res[i]
+#     assert (
+#         expected == actual
+#     ), f"Mismatch at index {i}: expected {expected}, got {actual}"
