@@ -1,156 +1,98 @@
-# test_case_file = "./test_case.txt"
-# answer_file = "./answer.txt"
+MAX_N = 100000
 
-# import sys
+class Node:
+    def __init__(self, id):
+        self.id = id
+        self.prev = None
+        self.next = None
 
-# f = open(test_case_file, "r")
-# answer = open(answer_file, "r")
+# 두 사람을 연결합니다.
+def connect(s, e):
+    if s is not None:
+        s.next = e
+    if e is not None:
+        e.prev = s
 
+# 두 원을 연결합니다.
+def connect_circle(u, v):
+    v_prev = v.prev
+    u_next = u.next
 
-# input = f.readline
+    connect(u, v)
+    connect(v_prev, u_next)
+
+# 두 원을 쪼갭니다.
+def split_circle(u, v):
+    u_prev = u.prev
+    v_prev = v.prev
+
+    connect(u_prev, v)
+    connect(v_prev, u)
+
+# 원을 출력합니다.
+def print_line(target):
+    # 원에서 학생 번호가 가장 작은 학생을 찾습니다.
+    mn = target.id
+    cur = target
+    while True:
+        cur = cur.next  
+        if cur is not None:
+            mn = min(mn, cur.id)
+        if cur == target:
+            break
+
+    # 가장 작은 학생부터 출력합니다.
+    init = nodes[student_id[mn]]
+    cur = nodes[student_id[mn]]
+    while True:
+        print(cur.id, end=' ')
+        # 반시계 방향으로 돌면서 출력합니다.
+        cur = cur.prev
+        if cur.id == init.id:
+            break
+    print()
 
 n, m, q = map(int, input().split())
 
+# 학생들을 관리해줄 배열입니다.
+nodes = [None] * (MAX_N + 2)
 
-class Node:
-    __slots__ = ("val", "left", "right")  # 메모리/속도 미세최적화
+# 학생들의 번호의 범위가 1 ~ 10억이기 때문에, map으로 학생들의 번호들을 관리해줍니다.
+student_id = {}
 
-    def __init__(self, val):
-        self.val = val
-        self.left = None
-        self.right = None
+node_cnt = 1
+for i in range(m):
+    line = list(map(int, input().split()))
+    circle_size = line[0]
+    start = tail = None
+    for j in range(1, circle_size + 1):
+        student_num = line[j]
+        student_id[student_num] = node_cnt
+        nodes[node_cnt] = Node(student_num)
 
-
-# 값 -> 노드 객체
-node_pos = {}
-
-# 초기 M개의 원 만들기
-for _ in range(m):
-    nums = list(map(int, input().split()))
-    k = nums[0]
-
-    prev = None
-    first = None
-    for i in range(1, k + 1):
-        v = nums[i]
-        node = Node(v)
-        node_pos[v] = node
-        if prev is None:
-            first = node
+        if j == 1:
+            start = tail = nodes[node_cnt]
         else:
-            prev.right = node
-            node.left = prev
-        prev = node
-    # 원형으로 연결
-    first.left = prev
-    prev.right = first
+            connect(tail, nodes[node_cnt])
+            tail = nodes[node_cnt]
+            if j == circle_size:
+                # 원에서의 마지막 학생은 해당 원의 첫 학생과 연결합니다.
+                connect(tail, start)
+        node_cnt += 1
 
-
-def get_node(val: int) -> Node:
-    return node_pos[val]
-
-
-def merge_circles(x: int, y: int):
-    u = get_node(x)
-    v = get_node(y)
-
-    # (옵션) 이미 같은 원인지 체크
-    cur = u.right
-    while cur is not u:
-        if cur is v:
-            return
-        cur = cur.right
-
-    v_prev = v.left  # 정답 코드의 v.prev
-    u_next = u.right  # 정답 코드의 u.next
-
-    # u <-> v
-    u.right = v
-    v.left = u
-
-    # v_prev <-> u_next
-    v_prev.right = u_next
-    u_next.left = v_prev
-
-
-def divide_circle(x: int, y: int):
-    head = get_node(x)
-    boundary = get_node(y)
-
-    if head is boundary:
-        return
-
-    # head에서 시작해 boundary 직전까지가 잘라낼 구간
-    curr = head
-    while True:
-        nxt = curr.right
-        if nxt is boundary:
-            tail = curr  # 잘라낼 구간의 마지막 노드
-            break
-        curr = nxt
-        if curr is head:
-            # 한 바퀴 돌았는데 boundary를 못 만나면 다른 원이므로 무시
-            return
-
-    # 현재 구조:
-    # ... <-> left_head <-> head ... tail <-> boundary <-> ...
-    left_head = head.left
-    left_y = boundary.left  # 이게 tail
-
-    # 1) 남는 원: left_head <-> boundary
-    left_head.right = boundary
-    boundary.left = left_head
-
-    # 2) 새 원: tail(left_y) <-> head
-    left_y.right = head
-    head.left = left_y
-
-
-ret = []
-
+# q개의 행동을 진행합니다.
 for _ in range(q):
-    cmd = list(map(int, input().split()))
-    t = cmd[0]
+    line = list(map(int, input().split()))
+    option = line[0]
 
-    if t == 1:
-        _, x, y = cmd
-        merge_circles(x, y)
+    if option == 1:
+        a, b = line[1], line[2]
+        connect_circle(nodes[student_id[a]], nodes[student_id[b]])
 
-    elif t == 2:
-        _, x, y = cmd
-        divide_circle(x, y)
+    elif option == 2:
+        a, b = line[1], line[2]
+        split_circle(nodes[student_id[a]], nodes[student_id[b]])
 
-    else:
-        _, x = cmd
-        node_x = get_node(x)
-
-        # 같은 원에서 최소값 노드 찾기 (오른쪽으로 한 바퀴)
-        curr = node_x
-        min_node = node_x
-        while True:
-            curr = curr.right
-            if curr.val < min_node.val:
-                min_node = curr
-            if curr is node_x:
-                break
-
-        # 최소값 노드에서 왼쪽으로 한 바퀴 돌며 출력
-        curr = min_node
-        res = []
-        while True:
-            res.append(str(curr.val))
-            curr = curr.left
-            if curr is min_node:
-                break
-        ret.append(" ".join(res))
-
-print("\n".join(ret))
-
-# answer_list = answer.readline()
-# res = ret[0]
-# for i in range(len(answer_list)):
-#     expected = answer_list[i]
-#     actual = res[i]
-#     assert (
-#         expected == actual
-#     ), f"Mismatch at index {i}: expected {expected}, got {actual}"
+    elif option == 3:
+        a = line[1]
+        print_line(nodes[student_id[a]])
