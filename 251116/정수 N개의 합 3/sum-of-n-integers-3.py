@@ -1,13 +1,29 @@
 n, k = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
-max_sum = 0
+arr_one_indexes = [[0] * (n + 1) for _ in range(n + 1)]
+
+for i in range(n):
+    for j in range(n):
+        arr_one_indexes[i + 1][j + 1] = arr[i][j]
+
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        arr_one_indexes[i][j] = (
+            arr_one_indexes[i][j - 1]
+            + arr_one_indexes[i - 1][j]
+            - arr_one_indexes[i - 1][j - 1]
+            + arr_one_indexes[i][j]
+        )
+result = 0
 for i in range(n - k + 1):
     for j in range(n - k + 1):
-        # i~i+k-1, j~j+k-1의 합 계산
-        cur_sum = 0
-        for x in range(i, i + k):
-            for y in range(j, j + k):
-                cur_sum += arr[x][y]
-        max_sum = max(max_sum, cur_sum)
-print(max_sum)
+        total = (
+            arr_one_indexes[i + k][j + k]
+            - arr_one_indexes[i + k][j]
+            - arr_one_indexes[i][j + k]
+            + arr_one_indexes[i][j]
+        )
+        if total > result:
+            result = total
+print(result)
