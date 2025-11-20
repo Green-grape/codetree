@@ -17,5 +17,5 @@ ret = 0
 for j in range(2, n - 2):
     left_max = max_num_lefts[j - 2]
     right_max = max_num_rights[j + 2]
-    ret = max(0, left_max + right_max + nums[j])
+    ret = max(ret, left_max + right_max + nums[j])
 print(ret)
