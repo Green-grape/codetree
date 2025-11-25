@@ -16,13 +16,14 @@ for _ in range(n):
     else:
         points.append((cur_end, 1))
         points.append((before_end, -1))
+    before_end = cur_end
 
 points.sort()
 
 coverage = 0
 ret = 0
-for _ in range(len(points)):
-    coverage += points[_][1]
+for i in range(len(points) - 1):
+    coverage += points[i][1]
     if coverage >= k:
-        ret += 1
-print(ret)
+        ret += points[i + 1][0] - points[i][0]
+print(ret) 
