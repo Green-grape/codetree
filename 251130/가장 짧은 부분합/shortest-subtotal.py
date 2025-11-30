@@ -13,4 +13,4 @@ for i in range(n):
         ans = min(ans, j - i)
     cur_sum -= numbers[i]
 
-print(ans)
+print(ans if ans != float("inf") else -1)
