@@ -23,5 +23,7 @@ for i in range(1, n + 1):
 ans = 0
 for i in range(MOD):
     if remain_max_idx[i] != -1:
-        ans = max(ans, remain_max_idx[i] - remain_min_idx[i], 1) # 최소 1
+        ans = max(ans, remain_max_idx[i] - remain_min_idx[i])
+        if i == 0:
+            ans = max(ans, remain_max_idx[i])  # 처음부터 remain == 0 인 경우
 print(ans)
