@@ -18,4 +18,4 @@ for i in range(n):
     if abs(cur_close_to_zero) < abs(most_close_to_zero):
         most_close_to_zero = cur_close_to_zero
 
-print(most_close_to_zero)
+print(abs(most_close_to_zero))
