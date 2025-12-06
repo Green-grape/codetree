@@ -3,7 +3,7 @@ def get_moo_cnt(num):
 
 
 left = 1
-right = 10**9
+right = 10**9 * 15
 
 target = int(input())
 while left <= right:
